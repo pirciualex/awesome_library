@@ -1,4 +1,5 @@
-﻿using AwesomeLibrary.API.Models;
+﻿using AwesomeLibrary.API.Entities;
+using AwesomeLibrary.API.Models;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,22 +13,11 @@ namespace AwesomeLibrary.API.Controllers
     [Route("api/books")]
     public class BooksController : ControllerBase
     {
-        private static List<BookGetDto> _books = new List<BookGetDto>
-        {
-            new BookGetDto
-            {
-                Id = Guid.NewGuid(),
-                Title = "White fang"
-            },
-            new BookGetDto
-            {
-                Id = Guid.Parse("e973d751-c737-4f42-bcd7-80ed8304e826"),
-                Title = "Poetry book"
-            },
-        };
+        private readonly AwesomeLibraryDbContext _context;
 
-        public BooksController()
+        public BooksController(AwesomeLibraryDbContext context)
         {
+            _context = context;
         }
 
         [HttpPost]
@@ -37,11 +27,8 @@ namespace AwesomeLibrary.API.Controllers
             {
                 return BadRequest(ModelState);
             }
-
-            var bookId = Guid.NewGuid();
-            var bookToAdd = new BookGetDto
+            var bookToAdd = new Book
             {
-                Id = bookId,
                 Title = book.Title,
                 Genre = book.Genre,
                 Pages = book.Pages,
@@ -49,21 +36,22 @@ namespace AwesomeLibrary.API.Controllers
                 PublishingYear = book.PublishingYear,
             };
 
-            _books.Add(bookToAdd);
+            _context.Books.Add(bookToAdd);
+            _context.SaveChanges();
 
-            return CreatedAtRoute("GetBook", new { id = bookId }, bookToAdd);
+            return CreatedAtRoute("GetBook", new { id = bookToAdd.Id }, bookToAdd);
         }
 
         [HttpGet()]
         public ActionResult<IEnumerable<BookGetDto>> GetAllBooks()
         {
-            return Ok(_books);
+            return Ok(_context.Books.ToList());
         }
 
         [HttpGet("{id}", Name = "GetBook")]
         public ActionResult<BookGetDto> GetBook(Guid id)
         {
-            var book = _books.SingleOrDefault(b => b.Id == id);
+            var book = _context.Books.SingleOrDefault(b => b.Id == id);
             if (book == default)
             {
                 return NotFound();
@@ -74,7 +62,7 @@ namespace AwesomeLibrary.API.Controllers
         [HttpPut("{id}")]
         public ActionResult FullyUpdateBook([FromRoute]Guid id, [FromBody]BookPostDto book)
         {
-            var bookToUpdate = _books.SingleOrDefault(b => b.Id == id);
+            var bookToUpdate = _context.Books.SingleOrDefault(b => b.Id == id);
             if (bookToUpdate == default)
             {
                 return NotFound();
@@ -92,7 +80,7 @@ namespace AwesomeLibrary.API.Controllers
         [HttpPatch("{id}")]
         public ActionResult PartialUpdateBook(Guid id, JsonPatchDocument<BookPostDto> patchDocument)
         {
-            var bookToUpdate = _books.SingleOrDefault(b => b.Id == id);
+            var bookToUpdate = _context.Books.SingleOrDefault(b => b.Id == id);
             if (bookToUpdate == default)
             {
                 return NotFound();
@@ -120,13 +108,13 @@ namespace AwesomeLibrary.API.Controllers
         [HttpDelete("{id}")]
         public ActionResult Delete(Guid id)
         {
-            var bookToUpdate = _books.SingleOrDefault(b => b.Id == id);
+            var bookToUpdate = _context.Books.SingleOrDefault(b => b.Id == id);
             if (bookToUpdate == default)
             {
                 return NotFound();
             }
 
-            _books.Remove(bookToUpdate);
+            _context.Books.Remove(bookToUpdate);
             return NoContent();
         }
     }
