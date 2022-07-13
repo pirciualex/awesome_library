@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using AwesomeLibrary.API.Entities;
 using AwesomeLibrary.API.Models;
+using AwesomeLibrary.Domain.Entities;
 
 namespace AwesomeLibrary.API.Mappings
 {

@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace AwesomeLibrary.API.Entities
+namespace AwesomeLibrary.Domain.Entities
 {
     public class Author
     {

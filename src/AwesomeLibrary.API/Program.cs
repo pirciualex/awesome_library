@@ -23,9 +23,8 @@
 
 
 
-using AwesomeLibrary.API;
-using Microsoft.EntityFrameworkCore;
-using System.Reflection;
+using AwesomeLibrary.Application;
+using AwesomeLibrary.Persistance;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,12 +35,8 @@ builder.Services.AddControllers().AddNewtonsoftJson();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<AwesomeLibraryDbContext>(options =>
-{
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-    //options.UseSqlServer(builder.Configuration["ConnectionStrings:DefaultConnection"];
-});
-builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
+builder.Services.AddPersistance(builder.Configuration);
+builder.Services.AddApplication();
 
 var app = builder.Build();
 

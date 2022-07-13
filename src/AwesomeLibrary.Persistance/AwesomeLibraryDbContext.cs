@@ -1,7 +1,7 @@
-﻿using AwesomeLibrary.API.Entities;
+﻿using AwesomeLibrary.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace AwesomeLibrary.API
+namespace AwesomeLibrary.Persistance
 {
     public class AwesomeLibraryDbContext : DbContext
     {

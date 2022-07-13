@@ -1,6 +1,9 @@
 ﻿using AutoMapper;
-using AwesomeLibrary.API.Entities;
 using AwesomeLibrary.API.Models;
+using AwesomeLibrary.Application.Requests.Books;
+using AwesomeLibrary.Domain.Entities;
+using AwesomeLibrary.Persistance;
+using MediatR;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,28 +19,20 @@ namespace AwesomeLibrary.API.Controllers
     {
         private readonly AwesomeLibraryDbContext _context;
         private readonly IMapper _mapper;
+        private readonly IMediator _mediator;
 
-        public BooksController(AwesomeLibraryDbContext context, IMapper mapper)
+        public BooksController(AwesomeLibraryDbContext context, IMapper mapper, IMediator mediator)
         {
             _context = context;
             _mapper = mapper;
+            _mediator = mediator;
         }
 
         [HttpPost]
-        public ActionResult<BookGetDto> CreateBook(BookPostDto book)
+        public async Task<ActionResult<BookGetDto>> CreateBook(CreateRequest request)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            var bookToAdd = _mapper.Map<Book>(book);
-
-            _context.Books.Add(bookToAdd);
-            _context.SaveChanges();
-
-            var bookToReturn = _mapper.Map<BookGetDto>(bookToAdd);
-
-            return CreatedAtRoute("GetBook", new { id = bookToReturn.Id }, bookToReturn);
+            var response = await _mediator.Send(request);
+            return CreatedAtRoute("GetBook", new { id = response.Id }, response);
         }
 
         [HttpGet()]

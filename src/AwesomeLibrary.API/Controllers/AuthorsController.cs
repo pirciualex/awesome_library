@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
-using AwesomeLibrary.API.Entities;
 using AwesomeLibrary.API.Models;
+using AwesomeLibrary.Domain.Entities;
+using AwesomeLibrary.Persistance;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
