@@ -12,8 +12,10 @@ namespace AwesomeLibrary.API.Mappings
             CreateMap<Book, BookGetDto>();
             CreateMap<Book, BookPostDto>();
 
+            CreateMap<AuthorPostDto, Author>();
             CreateMap<Author, AuthorGetDto>()
                 .ForMember(t => t.FullName, o => o.MapFrom(s => $"{s.FirstName} {s.LastName}"));
+            CreateMap<Author, AuthorPostDto>();
         }
     }
 }

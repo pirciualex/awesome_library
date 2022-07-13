@@ -17,6 +17,92 @@ namespace AwesomeLibrary.API.Controllers
         private readonly AwesomeLibraryDbContext _context;
         private readonly IMapper _mapper;
 
+        public BooksController(AwesomeLibraryDbContext context, IMapper mapper)
+        {
+            _context = context;
+            _mapper = mapper;
+        }
+
+        [HttpPost]
+        public ActionResult<BookGetDto> CreateBook(BookPostDto book)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var bookToAdd = _mapper.Map<Book>(book);
+
+            _context.Books.Add(bookToAdd);
+            _context.SaveChanges();
+
+            var bookToReturn = _mapper.Map<BookGetDto>(bookToAdd);
+
+            return CreatedAtRoute("GetBook", new { id = bookToReturn.Id }, bookToReturn);
+        }
+
+        [HttpGet()]
+        public ActionResult<IEnumerable<BookGetDto>> GetAllBooks()
+        {
+            return Ok(_mapper.Map<IEnumerable<BookGetDto>>(_context.Books.ToList()));
+        }
+
+        [HttpGet("{id}", Name = "GetBook")]
+        public ActionResult<BookGetDto> GetBook(Guid id)
+        {
+            var book = _context.Books.SingleOrDefault(b => b.Id == id);
+            if (book == default)
+            {
+                return NotFound();
+            }
+            return Ok(_mapper.Map<BookGetDto>(book));
+        }
+
+        [HttpPut("{id}")]
+        public ActionResult FullyUpdateBook([FromRoute] Guid id, [FromBody] BookPostDto book)
+        {
+            var bookToUpdate = _context.Books.SingleOrDefault(b => b.Id == id);
+            if (bookToUpdate == default)
+            {
+                return NotFound();
+            }
+
+            _mapper.Map(book, bookToUpdate);
+            _context.SaveChanges();
+            return NoContent();
+        }
+
+        [HttpPatch("{id}")]
+        public ActionResult PartialUpdateBook(Guid id, JsonPatchDocument<BookPostDto> patchDocument)
+        {
+            var bookToUpdate = _context.Books.SingleOrDefault(b => b.Id == id);
+            if (bookToUpdate == default)
+            {
+                return NotFound();
+            }
+
+            var bookUpdated = _mapper.Map<BookPostDto>(bookToUpdate);
+            patchDocument.ApplyTo(bookUpdated);
+            _mapper.Map(bookUpdated, bookToUpdate);
+            _context.SaveChanges();
+
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public ActionResult Delete(Guid id)
+        {
+            var bookToUpdate = _context.Books.SingleOrDefault(b => b.Id == id);
+            if (bookToUpdate == default)
+            {
+                return NotFound();
+            }
+
+            _context.Books.Remove(bookToUpdate);
+            _context.SaveChanges();
+            return NoContent();
+        }
+
+        #region LINQ
         //private static List<Book> _books = new List<Book>();
         private static List<Book> _books = new List<Book>
         {
@@ -166,91 +252,6 @@ namespace AwesomeLibrary.API.Controllers
             },
         };
 
-        public BooksController(AwesomeLibraryDbContext context, IMapper mapper)
-        {
-            _context = context;
-            _mapper = mapper;
-        }
-
-        [HttpPost]
-        public ActionResult<BookGetDto> CreateBook(BookPostDto book)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            var bookToAdd = _mapper.Map<Book>(book);
-
-            _context.Books.Add(bookToAdd);
-            _context.SaveChanges();
-
-            var bookToReturn = _mapper.Map<BookGetDto>(bookToAdd);
-
-            return CreatedAtRoute("GetBook", new { id = bookToReturn.Id }, bookToReturn);
-        }
-
-        [HttpGet()]
-        public ActionResult<IEnumerable<BookGetDto>> GetAllBooks()
-        {
-            return Ok(_mapper.Map<IEnumerable<BookGetDto>>(_context.Books.ToList()));
-        }
-
-        [HttpGet("{id}", Name = "GetBook")]
-        public ActionResult<BookGetDto> GetBook(Guid id)
-        {
-            var book = _context.Books.SingleOrDefault(b => b.Id == id);
-            if (book == default)
-            {
-                return NotFound();
-            }
-            return Ok(_mapper.Map<BookGetDto>(book));
-        }
-
-        [HttpPut("{id}")]
-        public ActionResult FullyUpdateBook([FromRoute] Guid id, [FromBody] BookPostDto book)
-        {
-            var bookToUpdate = _context.Books.SingleOrDefault(b => b.Id == id);
-            if (bookToUpdate == default)
-            {
-                return NotFound();
-            }
-
-            _mapper.Map(book, bookToUpdate);
-            _context.SaveChanges();
-            return NoContent();
-        }
-
-        [HttpPatch("{id}")]
-        public ActionResult PartialUpdateBook(Guid id, JsonPatchDocument<BookPostDto> patchDocument)
-        {
-            var bookToUpdate = _context.Books.SingleOrDefault(b => b.Id == id);
-            if (bookToUpdate == default)
-            {
-                return NotFound();
-            }
-
-            var bookUpdated = _mapper.Map<BookPostDto>(bookToUpdate);
-            patchDocument.ApplyTo(bookUpdated);
-            _mapper.Map(bookUpdated, bookToUpdate);
-            _context.SaveChanges();
-
-            return NoContent();
-        }
-
-        [HttpDelete("{id}")]
-        public ActionResult Delete(Guid id)
-        {
-            var bookToUpdate = _context.Books.SingleOrDefault(b => b.Id == id);
-            if (bookToUpdate == default)
-            {
-                return NotFound();
-            }
-
-            _context.Books.Remove(bookToUpdate);
-            _context.SaveChanges();
-            return NoContent();
-        }
-
         [HttpGet("linq")]
         public IActionResult WorkWithLinq()
         {
@@ -294,7 +295,7 @@ namespace AwesomeLibrary.API.Controllers
             //}
 
             // PAGINARE
-            var books6 = _books.Skip(2);
+            var books6 = _context.Books.Skip(2);
             var books7 = _books.Take(3);
 
             // INLANTUIREA METODELOR
@@ -317,5 +318,6 @@ namespace AwesomeLibrary.API.Controllers
         {
             return book.Id.ToString() == "e973d751-c737-4f42-bcd7-80ed8304e826";
         }
+        #endregion
     }
 }

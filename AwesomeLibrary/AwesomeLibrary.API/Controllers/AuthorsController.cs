@@ -4,8 +4,6 @@ using AwesomeLibrary.API.Models;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace AwesomeLibrary.API.Controllers
 {
     [Route("api/authors")]
@@ -24,25 +22,10 @@ namespace AwesomeLibrary.API.Controllers
         [HttpPost]
         public ActionResult<AuthorGetDto> CreateAuthor(AuthorPostDto author)
         {
-            var authorToAdd = new Author
-            {
-                FirstName = author.FirstName,
-                LastName = author.LastName,
-                DateOfBirth = author.DateOfBirth,
-                DateOfDeath = author.DateOfDeath,
-            };
-
+            var authorToAdd = _mapper.Map<Author>(author);
             _context.Authors.Add(authorToAdd);
             _context.SaveChanges();
-
-            var authorToReturn = new AuthorGetDto
-            {
-                Id = authorToAdd.Id,
-                FullName = authorToAdd.FirstName + " " + authorToAdd.LastName,
-                DateOfBirth = authorToAdd.DateOfBirth,
-                DateOfDeath = authorToAdd.DateOfDeath,
-            };
-
+            var authorToReturn = _mapper.Map<AuthorGetDto>(authorToAdd);
             return CreatedAtRoute("GetAuthor", new { id = authorToReturn.Id }, authorToReturn);
         }
 
@@ -73,12 +56,8 @@ namespace AwesomeLibrary.API.Controllers
                 return NotFound();
             }
 
-            authorToUpdate.FirstName = author.FirstName;
-            authorToUpdate.LastName = author.LastName;
-            authorToUpdate.DateOfBirth = author.DateOfBirth;
-            authorToUpdate.DateOfDeath = author.DateOfDeath;
+            _mapper.Map(author, authorToUpdate);
             _context.SaveChanges();
-
             return NoContent();
         }
 
@@ -91,21 +70,10 @@ namespace AwesomeLibrary.API.Controllers
                 return NotFound();
             }
 
-            var authorUpdated = new AuthorPostDto
-            {
-                FirstName = authorToUpdate.FirstName,
-                LastName = authorToUpdate.LastName,
-                DateOfBirth = authorToUpdate.DateOfBirth,
-                DateOfDeath = authorToUpdate.DateOfDeath,
-            };
-
+            var authorUpdated = _mapper.Map<AuthorPostDto>(authorToUpdate);
             patchDocument.ApplyTo(authorUpdated);
-
-            authorToUpdate.FirstName = authorUpdated.FirstName;
-            authorToUpdate.LastName = authorUpdated.LastName;
-            authorToUpdate.DateOfBirth = authorUpdated.DateOfBirth;
-            authorToUpdate.DateOfDeath = authorUpdated.DateOfDeath;
-
+            _mapper.Map(authorUpdated, authorToUpdate);
+            _context.SaveChanges();
             return NoContent();
         }
 
@@ -119,6 +87,7 @@ namespace AwesomeLibrary.API.Controllers
             }
 
             _context.Authors.Remove(authorToDelete);
+            _context.SaveChanges();
             return NoContent();
         }
     }
