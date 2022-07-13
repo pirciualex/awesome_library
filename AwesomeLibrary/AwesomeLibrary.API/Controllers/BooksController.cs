@@ -1,4 +1,5 @@
-﻿using AwesomeLibrary.API.Entities;
+﻿using AutoMapper;
+using AwesomeLibrary.API.Entities;
 using AwesomeLibrary.API.Models;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
@@ -14,10 +15,12 @@ namespace AwesomeLibrary.API.Controllers
     public class BooksController : ControllerBase
     {
         private readonly AwesomeLibraryDbContext _context;
+        private readonly IMapper _mapper;
 
-        public BooksController(AwesomeLibraryDbContext context)
+        public BooksController(AwesomeLibraryDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         [HttpPost]
@@ -27,25 +30,20 @@ namespace AwesomeLibrary.API.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var bookToAdd = new Book
-            {
-                Title = book.Title,
-                Genre = book.Genre,
-                Pages = book.Pages,
-                Publisher = book.Publisher,
-                PublishingYear = book.PublishingYear,
-            };
+            var bookToAdd = _mapper.Map<Book>(book);
 
             _context.Books.Add(bookToAdd);
             _context.SaveChanges();
 
-            return CreatedAtRoute("GetBook", new { id = bookToAdd.Id }, bookToAdd);
+            var bookToReturn = _mapper.Map<BookGetDto>(bookToAdd);
+
+            return CreatedAtRoute("GetBook", new { id = bookToReturn.Id }, bookToReturn);
         }
 
         [HttpGet()]
         public ActionResult<IEnumerable<BookGetDto>> GetAllBooks()
         {
-            return Ok(_context.Books.ToList());
+            return Ok(_mapper.Map<IEnumerable<BookGetDto>>(_context.Books.ToList()));
         }
 
         [HttpGet("{id}", Name = "GetBook")]
@@ -56,7 +54,7 @@ namespace AwesomeLibrary.API.Controllers
             {
                 return NotFound();
             }
-            return Ok(book);
+            return Ok(_mapper.Map<BookGetDto>(book));
         }
 
         [HttpPut("{id}")]
@@ -68,12 +66,8 @@ namespace AwesomeLibrary.API.Controllers
                 return NotFound();
             }
 
-            bookToUpdate.Title = book.Title;
-            bookToUpdate.Genre = book.Genre;
-            bookToUpdate.Pages = book.Pages;
-            bookToUpdate.Publisher = book.Publisher;
-            bookToUpdate.PublishingYear = book.PublishingYear;
-
+            _mapper.Map(book, bookToUpdate);
+            _context.SaveChanges();
             return NoContent();
         }
 
@@ -86,21 +80,10 @@ namespace AwesomeLibrary.API.Controllers
                 return NotFound();
             }
 
-            var bookUpdated = new BookPostDto
-            {
-                Title = bookToUpdate.Title,
-                Genre = bookToUpdate.Genre,
-                Pages = bookToUpdate.Pages,
-                Publisher = bookToUpdate.Publisher,
-                PublishingYear = bookToUpdate.PublishingYear,
-            };
-
+            var bookUpdated = _mapper.Map<BookPostDto>(bookToUpdate);
             patchDocument.ApplyTo(bookUpdated);
-            bookToUpdate.Title = bookUpdated.Title;
-            bookToUpdate.Genre = bookUpdated.Genre;
-            bookToUpdate.Pages = bookUpdated.Pages;
-            bookToUpdate.Publisher = bookUpdated.Publisher;
-            bookToUpdate.PublishingYear = bookUpdated.PublishingYear;
+            _mapper.Map(bookUpdated, bookToUpdate);
+            _context.SaveChanges();
 
             return NoContent();
         }
@@ -115,6 +98,7 @@ namespace AwesomeLibrary.API.Controllers
             }
 
             _context.Books.Remove(bookToUpdate);
+            _context.SaveChanges();
             return NoContent();
         }
     }
