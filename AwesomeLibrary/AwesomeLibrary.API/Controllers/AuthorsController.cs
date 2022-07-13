@@ -1,4 +1,5 @@
-﻿using AwesomeLibrary.API.Entities;
+﻿using AutoMapper;
+using AwesomeLibrary.API.Entities;
 using AwesomeLibrary.API.Models;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
@@ -12,10 +13,12 @@ namespace AwesomeLibrary.API.Controllers
     public class AuthorsController : ControllerBase
     {
         private readonly AwesomeLibraryDbContext _context;
+        private readonly IMapper _mapper;
 
-        public AuthorsController(AwesomeLibraryDbContext context)
+        public AuthorsController(AwesomeLibraryDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         [HttpPost]
@@ -46,7 +49,7 @@ namespace AwesomeLibrary.API.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<AuthorGetDto>> GetAllAuthors()
         {
-            return Ok(_context.Authors.ToList());
+            return Ok(_mapper.Map<IEnumerable<AuthorGetDto>>(_context.Authors.ToList()));
         }
 
         [HttpGet("{id}", Name = "GetAuthor")]
@@ -58,13 +61,7 @@ namespace AwesomeLibrary.API.Controllers
                 return NotFound();
             }
 
-            return Ok(new AuthorGetDto
-            {
-                Id = author.Id,
-                FullName = author.FirstName + " " + author.LastName,
-                DateOfBirth = author.DateOfBirth,
-                DateOfDeath = author.DateOfDeath,
-            });
+            return Ok(_mapper.Map<AuthorGetDto>(author));
         }
 
         [HttpPut("{id}")]

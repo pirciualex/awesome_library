@@ -17,6 +17,155 @@ namespace AwesomeLibrary.API.Controllers
         private readonly AwesomeLibraryDbContext _context;
         private readonly IMapper _mapper;
 
+        //private static List<Book> _books = new List<Book>();
+        private static List<Book> _books = new List<Book>
+        {
+            new Book
+            {
+                Id = Guid.Parse("498d1371-2cbe-4e36-8bd9-dcd041433d86"),
+                Title = "Siddhartha",
+                Genre = "Spiritality",
+                Pages = 216,
+                Publisher = "Rao",
+                PublishingYear = 2013
+            },
+            new Book
+            {
+                Id = Guid.Parse("e973d751-c737-4f42-bcd7-80ed8304e826"),
+                Title = "Clean Code",
+                Genre = "Programming",
+                Pages = 464,
+                Publisher = "Pearson Education",
+                PublishingYear = 2008
+            },
+            new Book
+            {
+                Id = Guid.Parse("fb7ac48e-6a30-426f-9ccc-e0a5659911e1"),
+                Title = "The Talisman",
+                Genre = "Horror",
+                Pages = 992,
+                Publisher = "Orion Publishing",
+                PublishingYear = 2012
+            },
+            new Book
+            {
+                Id = Guid.Parse("35b4208e-a3b7-404d-aa08-d2db7a386776"),
+                Title = "The Shining",
+                Genre = "Horror",
+                Pages = 498,
+                Publisher = "Hodder & Stoughton Ltd",
+                PublishingYear = 2007
+            },
+            new Book
+            {
+                Id = Guid.Parse("498d1371-2cbe-4e36-8bd9-dcd041433d86"),
+                Title = "Siddhartha",
+                Genre = "Spiritality",
+                Pages = 216,
+                Publisher = "Rao",
+                PublishingYear = 2013
+            },
+            new Book
+            {
+                Id = Guid.Parse("e973d751-c737-4f42-bcd7-80ed8304e826"),
+                Title = "Clean Code",
+                Genre = "Programming",
+                Pages = 464,
+                Publisher = "Pearson Education",
+                PublishingYear = 2008
+            },
+            new Book
+            {
+                Id = Guid.Parse("fb7ac48e-6a30-426f-9ccc-e0a5659911e1"),
+                Title = "The Talisman",
+                Genre = "Horror",
+                Pages = 992,
+                Publisher = "Orion Publishing",
+                PublishingYear = 2012
+            },
+            new Book
+            {
+                Id = Guid.Parse("35b4208e-a3b7-404d-aa08-d2db7a386776"),
+                Title = "The Shining",
+                Genre = "Horror",
+                Pages = 498,
+                Publisher = "Hodder & Stoughton Ltd",
+                PublishingYear = 2007
+            },
+            new Book
+            {
+                Id = Guid.Parse("498d1371-2cbe-4e36-8bd9-dcd041433d86"),
+                Title = "Siddhartha",
+                Genre = "Spiritality",
+                Pages = 216,
+                Publisher = "Rao",
+                PublishingYear = 2013
+            },
+            new Book
+            {
+                Id = Guid.Parse("e973d751-c737-4f42-bcd7-80ed8304e826"),
+                Title = "Clean Code",
+                Genre = "Programming",
+                Pages = 464,
+                Publisher = "Pearson Education",
+                PublishingYear = 2008
+            },
+            new Book
+            {
+                Id = Guid.Parse("fb7ac48e-6a30-426f-9ccc-e0a5659911e1"),
+                Title = "The Talisman",
+                Genre = "Horror",
+                Pages = 992,
+                Publisher = "Orion Publishing",
+                PublishingYear = 2012
+            },
+            new Book
+            {
+                Id = Guid.Parse("35b4208e-a3b7-404d-aa08-d2db7a386776"),
+                Title = "The Shining",
+                Genre = "Horror",
+                Pages = 498,
+                Publisher = "Hodder & Stoughton Ltd",
+                PublishingYear = 2007
+            },
+            new Book
+            {
+                Id = Guid.Parse("498d1371-2cbe-4e36-8bd9-dcd041433d86"),
+                Title = "Siddhartha",
+                Genre = "Spiritality",
+                Pages = 216,
+                Publisher = "Rao",
+                PublishingYear = 2013
+            },
+            new Book
+            {
+                Id = Guid.Parse("e973d751-c737-4f42-bcd7-80ed8304e826"),
+                Title = "Clean Code",
+                Genre = "Programming",
+                Pages = 464,
+                Publisher = "Pearson Education",
+                PublishingYear = 2008
+            },
+            new Book
+            {
+                Id = Guid.Parse("fb7ac48e-6a30-426f-9ccc-e0a5659911e1"),
+                Title = "The Talisman",
+                Genre = "Horror",
+                Pages = 992,
+                Publisher = "Orion Publishing",
+                PublishingYear = 2012
+            },
+            new Book
+            {
+                Id = Guid.Parse("35b4208e-a3b7-404d-aa08-d2db7a386776"),
+                Title = "The Shining",
+                Genre = "Horror",
+                Pages = 498,
+                Publisher = "Hodder & Stoughton Ltd",
+                PublishingYear = 2007
+            },
+        };
+
         public BooksController(AwesomeLibraryDbContext context, IMapper mapper)
         {
             _context = context;
@@ -58,7 +207,7 @@ namespace AwesomeLibrary.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public ActionResult FullyUpdateBook([FromRoute]Guid id, [FromBody]BookPostDto book)
+        public ActionResult FullyUpdateBook([FromRoute] Guid id, [FromBody] BookPostDto book)
         {
             var bookToUpdate = _context.Books.SingleOrDefault(b => b.Id == id);
             if (bookToUpdate == default)
@@ -100,6 +249,73 @@ namespace AwesomeLibrary.API.Controllers
             _context.Books.Remove(bookToUpdate);
             _context.SaveChanges();
             return NoContent();
+        }
+
+        [HttpGet("linq")]
+        public IActionResult WorkWithLinq()
+        {
+            // FILTRARE
+            //var book1 = _books.Single();
+            //var book2 = _books.First();
+
+            //var book3 = _books.SingleOrDefault();
+            //var book4 = _books.FirstOrDefault();
+
+            //var book5 = _books.SingleOrDefault(GetOneBook);
+            //var book6 = _books.FirstOrDefault(book =>
+            //{
+            //    return book.Id.ToString() == "e973d751-c737-4f42-bcd7-80ed8304e826";
+            //});
+            //var book7 = _books.FirstOrDefault(book => book.Genre == "Horror");
+
+            //var areThereAnyBooks1 = _books.Any();
+            //var areThereAnyBooks2 = _books.Any(b => b.Genre == "Horror");
+
+            // PROIECTIE
+            //var books1 = _books.Where(b => b.Genre == "Horror" && b.Pages > 600);
+            //var books2 = _books.Select(b => new { Title = b.Title, Genre = b.Genre });
+            //var books3 = _books.Select(b => _mapper.Map<BookGetDto>(b));
+
+            // ORDONARE
+            //var books4 = _books.OrderBy(b => b.Title);
+            //var books5 = _books.OrderByDescending(b => b.Pages);
+
+            // AGREGARE
+            //var aggregate1 = _books.Average(b => b.Pages);
+            //var aggregate2 = _books.Min(b => b.Title.Length);
+            //var aggregate3 = _books.Max(b => b.PublishingYear);
+            //var aggregate4 = _books.Count();
+            //var aggregateResult = new
+            //{
+            //    MeanNumberOfPages = aggregate1,
+            //    TheShortestTitle = aggregate2,
+            //    TheMostRecentPublishingYear = aggregate3,
+            //    TotalBooksInCollection = aggregate4
+            //}
+
+            // PAGINARE
+            var books6 = _books.Skip(2);
+            var books7 = _books.Take(3);
+
+            // INLANTUIREA METODELOR
+            int page = 2, pageSize = 5;
+            var books8 = _books.Skip((page - 1) * pageSize).Take(pageSize);
+
+            // DEFERRED EXECUTION
+            var booksToProcess = _books.AsQueryable();
+            booksToProcess = booksToProcess.Where(b => b.Genre == "Horror")
+                                .Skip((page - 1) * pageSize)
+                                .Take(pageSize);
+
+            // IMEDIATE EXECUTION - ToList, Count, Max, Min
+            var books9 = booksToProcess.ToList();
+
+            return Ok(books9);
+        }
+
+        private bool GetOneBook(Book book)
+        {
+            return book.Id.ToString() == "e973d751-c737-4f42-bcd7-80ed8304e826";
         }
     }
 }
