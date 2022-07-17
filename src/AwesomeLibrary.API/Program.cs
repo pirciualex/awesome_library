@@ -23,6 +23,7 @@
 
 
 
+using AwesomeLibrary.API.Middleware;
 using AwesomeLibrary.Application;
 using AwesomeLibrary.Persistance;
 
@@ -47,6 +48,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCustomExceptionHandler();
 app.UseHttpsRedirection();
 app.UseRouting();
 app.UseAuthorization();

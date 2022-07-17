@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AwesomeLibrary.Common\AwesomeLibrary.Common.csproj" />
     <ProjectReference Include="..\AwesomeLibrary.Domain\AwesomeLibrary.Domain.csproj" />
     <ProjectReference Include="..\AwesomeLibrary.Persistance\AwesomeLibrary.Persistance.csproj" />
   </ItemGroup>

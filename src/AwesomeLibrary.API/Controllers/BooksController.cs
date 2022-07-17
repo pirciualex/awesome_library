@@ -36,20 +36,17 @@ namespace AwesomeLibrary.API.Controllers
         }
 
         [HttpGet()]
-        public ActionResult<IEnumerable<BookGetDto>> GetAllBooks()
+        public async Task<ActionResult<IEnumerable<BookGetDto>>> GetAllBooks()
         {
-            return Ok(_mapper.Map<IEnumerable<BookGetDto>>(_context.Books.ToList()));
+            var response = await _mediator.Send(new GetAllRequest());
+            return Ok(response);
         }
 
         [HttpGet("{id}", Name = "GetBook")]
-        public ActionResult<BookGetDto> GetBook(Guid id)
+        public async Task<ActionResult<BookGetDto>> GetBook(Guid id)
         {
-            var book = _context.Books.SingleOrDefault(b => b.Id == id);
-            if (book == default)
-            {
-                return NotFound();
-            }
-            return Ok(_mapper.Map<BookGetDto>(book));
+            var response = await _mediator.Send(new GetRequest { Id = id });
+            return Ok(response);
         }
 
         [HttpPut("{id}")]
