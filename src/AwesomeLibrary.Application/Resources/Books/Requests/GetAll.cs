@@ -23,7 +23,12 @@ namespace AwesomeLibrary.Application.Resources.Books.Requests
 
         public async Task<IEnumerable<BookGetDto>> Handle(GetAllRequest request, CancellationToken cancellationToken)
         {
-            return _mapper.Map<IEnumerable<BookGetDto>>(await _context.Books.ToListAsync());
+            var books = await
+                _context.Books
+                .Include(b => b.BooksAuthors)
+                .ThenInclude(ba => ba.Author)
+                .ToListAsync();
+            return _mapper.Map<IEnumerable<BookWithAuthorDto>>(books);
         }
     }
 }

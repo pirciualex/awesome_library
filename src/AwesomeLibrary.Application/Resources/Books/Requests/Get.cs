@@ -7,12 +7,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AwesomeLibrary.Application.Resources.Books.Requests
 {
-    public class GetRequest : IRequest<BookGetDto>
+    public class GetRequest : IRequest<BookWithAuthorDto>
     {
         public Guid Id { get; set; }
     }
 
-    public class GetRequestHandler : IRequestHandler<GetRequest, BookGetDto>
+    public class GetRequestHandler : IRequestHandler<GetRequest, BookWithAuthorDto>
     {
         private readonly AwesomeLibraryDbContext _context;
         private readonly IMapper _mapper;
@@ -23,15 +23,19 @@ namespace AwesomeLibrary.Application.Resources.Books.Requests
             _mapper = mapper;
         }
 
-        public async Task<BookGetDto> Handle(GetRequest request, CancellationToken cancellationToken)
+        public async Task<BookWithAuthorDto> Handle(GetRequest request, CancellationToken cancellationToken)
         {
-            var book = await _context.Books.SingleOrDefaultAsync(b => b.Id == request.Id, cancellationToken);
+            var book = await
+                _context.Books
+                .Include(b => b.BooksAuthors)
+                .ThenInclude(ba => ba.Author)
+                .SingleOrDefaultAsync(b => b.Id == request.Id, cancellationToken);
             if (book == default)
             {
                 throw new NotFoundException("The book you requested was not found");
             }
 
-            return _mapper.Map<BookGetDto>(book);
+            return _mapper.Map<BookWithAuthorDto>(book);
         }
     }
 }
