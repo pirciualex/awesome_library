@@ -10,6 +10,7 @@ namespace AwesomeLibrary.Application.Resources.Authors
         {
             CreateMap<Author, AuthorGetDto>()
                 .ForMember(t => t.FullName, o => o.MapFrom(s => $"{s.FirstName} {s.LastName}"));
+            CreateMap<AuthorPostDto, Author>();
         }
     }
 }

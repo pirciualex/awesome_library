@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using AwesomeLibrary.Application.Resources.Books.Models;
 using AwesomeLibrary.Application.Resources.Books.Requests;
+using AwesomeLibrary.Application.Resources.BooksAuthors.Models;
 using AwesomeLibrary.Domain.Entities;
 
 namespace AwesomeLibrary.Application.Resources.Books
@@ -12,9 +13,9 @@ namespace AwesomeLibrary.Application.Resources.Books
             CreateMap<CreateRequest, Book>();
             CreateMap<Book, BookGetDto>();
 
-            CreateMap<Book, BookWithAuthorsDto>()
+            CreateMap<Book, BookWithAuthorsGetDto>()
                 .ForMember(t => t.Authors, o => o.MapFrom(s => s.BooksAuthors.Select(ba => ba.Author)));
-            //CreateMap<Book, BookPostDto>();
+            CreateMap<BookPostDto, Book>();
         }
     }
 }

@@ -1,7 +1,5 @@
-﻿using AutoMapper;
-using AwesomeLibrary.Application.Resources.Books.Models;
-using AwesomeLibrary.Domain.Entities;
-using AwesomeLibrary.Persistance;
+﻿using AwesomeLibrary.Application.Resources.Books.Models;
+using AwesomeLibrary.Application.Services.Interfaces;
 using MediatR;
 
 namespace AwesomeLibrary.Application.Resources.Books.Requests
@@ -12,24 +10,16 @@ namespace AwesomeLibrary.Application.Resources.Books.Requests
 
     public class CreateRequestHandler : IRequestHandler<CreateRequest, BookGetDto>
     {
-        private readonly AwesomeLibraryDbContext _context;
-        private readonly IMapper _mapper;
+        private readonly IBookService _bookService;
 
-        public CreateRequestHandler(AwesomeLibraryDbContext context, IMapper mapper)
+        public CreateRequestHandler(IBookService bookService)
         {
-            _context = context;
-            _mapper = mapper;
+            _bookService = bookService;
         }
 
         public async Task<BookGetDto> Handle(CreateRequest request, CancellationToken cancellationToken)
         {
-            var bookToAdd = _mapper.Map<Book>(request);
-
-            _context.Books.Add(bookToAdd);
-            await _context.SaveChangesAsync();
-
-            var bookToReturn = _mapper.Map<BookGetDto>(bookToAdd);
-            return bookToReturn;
+            return await _bookService.CreateBook(request, cancellationToken);
         }
     }
 }

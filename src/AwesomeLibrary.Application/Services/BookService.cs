@@ -1,7 +1,10 @@
 ﻿using AutoMapper;
 using AwesomeLibrary.Application.Resources.Books.Models;
+using AwesomeLibrary.Application.Resources.Books.Requests;
+using AwesomeLibrary.Application.Resources.BooksAuthors.Models;
 using AwesomeLibrary.Application.Services.Interfaces;
 using AwesomeLibrary.Common.Exceptions;
+using AwesomeLibrary.Domain.Entities;
 using AwesomeLibrary.Persistance;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,7 +21,18 @@ namespace AwesomeLibrary.Application.Services
             _mapper = mapper;
         }
 
-        public async Task<BookWithAuthorsDto> GetBookWithAuthors(Guid bookId, CancellationToken cancellationToken)
+        public async Task<BookGetDto> CreateBook(BookPostDto book, CancellationToken cancellationToken)
+        {
+            var bookToAdd = _mapper.Map<Book>(book);
+
+            _context.Books.Add(bookToAdd);
+            await _context.SaveChangesAsync();
+
+            var bookToReturn = _mapper.Map<BookGetDto>(bookToAdd);
+            return bookToReturn;
+        }
+
+        public async Task<BookWithAuthorsGetDto> GetBookWithAuthors(Guid bookId, CancellationToken cancellationToken)
         {
             var book = await
                 _context.Books
@@ -30,7 +44,8 @@ namespace AwesomeLibrary.Application.Services
                 throw new NotFoundException("The book you requested was not found");
             }
 
-            return _mapper.Map<BookWithAuthorsDto>(book);
+            var bookToReturn = _mapper.Map<BookWithAuthorsGetDto>(book);
+            return bookToReturn;
         }
     }
 }

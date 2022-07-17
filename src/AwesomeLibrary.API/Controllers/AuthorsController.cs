@@ -1,7 +1,8 @@
 ﻿using AutoMapper;
 using AwesomeLibrary.API.Models;
-using AwesomeLibrary.Domain.Entities;
+using AwesomeLibrary.Application.Resources.Authors.Requests;
 using AwesomeLibrary.Persistance;
+using MediatR;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,21 +14,20 @@ namespace AwesomeLibrary.API.Controllers
     {
         private readonly AwesomeLibraryDbContext _context;
         private readonly IMapper _mapper;
+        private readonly IMediator _mediator;
 
-        public AuthorsController(AwesomeLibraryDbContext context, IMapper mapper)
+        public AuthorsController(AwesomeLibraryDbContext context, IMapper mapper, IMediator mediator)
         {
             _context = context;
             _mapper = mapper;
+            _mediator = mediator;
         }
 
         [HttpPost]
-        public ActionResult<AuthorGetDto> CreateAuthor(AuthorPostDto author)
+        public async Task<ActionResult<AuthorGetDto>> CreateAuthor(CreateRequest request)
         {
-            var authorToAdd = _mapper.Map<Author>(author);
-            _context.Authors.Add(authorToAdd);
-            _context.SaveChanges();
-            var authorToReturn = _mapper.Map<AuthorGetDto>(authorToAdd);
-            return CreatedAtRoute("GetAuthor", new { id = authorToReturn.Id }, authorToReturn);
+            var response = await _mediator.Send(request);
+            return CreatedAtRoute("GetAuthor", new { id = response.Id }, response);
         }
 
         [HttpGet]

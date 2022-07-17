@@ -13,7 +13,9 @@ namespace AwesomeLibrary.Application
             services.AddMediatR(Assembly.GetExecutingAssembly());
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
+            services.AddScoped<IAuthorService, AuthorService>();
             services.AddScoped<IBookService, BookService>();
+            services.AddScoped<IBookAuthorService, BookAuthorService>();
             return services;
         }
     }

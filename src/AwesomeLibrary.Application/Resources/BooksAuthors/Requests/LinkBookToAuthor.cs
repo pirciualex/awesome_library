@@ -1,35 +1,28 @@
-﻿using AutoMapper;
-using AwesomeLibrary.Application.Resources.Books.Models;
-using AwesomeLibrary.Application.Resources.BooksAuthors.Models;
+﻿using AwesomeLibrary.Application.Resources.BooksAuthors.Models;
 using AwesomeLibrary.Application.Services.Interfaces;
-using AwesomeLibrary.Domain.Entities;
-using AwesomeLibrary.Persistance;
 using MediatR;
 
 namespace AwesomeLibrary.Application.Resources.BooksAuthors.Requests
 {
-    public class LinkBookToAuthorRequest : BookAuthorDto, IRequest<BookWithAuthorsDto>
+    public class LinkBookToAuthorRequest : BookAuthorDto, IRequest<BookWithAuthorsGetDto>
     {
     }
 
-    public class LinkBookToAuthorRequestHandler : IRequestHandler<LinkBookToAuthorRequest, BookWithAuthorsDto>
+    public class LinkBookToAuthorRequestHandler : IRequestHandler<LinkBookToAuthorRequest, BookWithAuthorsGetDto>
     {
-        private readonly AwesomeLibraryDbContext _context;
-        private readonly IMapper _mapper;
         private readonly IBookService _bookService;
+        private readonly IBookAuthorService _bookAuthorService;
 
-        public LinkBookToAuthorRequestHandler(AwesomeLibraryDbContext context, IMapper mapper, IBookService bookService)
+        public LinkBookToAuthorRequestHandler(IBookService bookService, IBookAuthorService bookAuthorService)
         {
-            _context = context;
-            _mapper = mapper;
             _bookService = bookService;
+            _bookAuthorService = bookAuthorService;
         }
 
-        public async Task<BookWithAuthorsDto> Handle(LinkBookToAuthorRequest request, CancellationToken cancellationToken)
+        public async Task<BookWithAuthorsGetDto> Handle(LinkBookToAuthorRequest request, CancellationToken cancellationToken)
         {
-            await _context.BooksAuthors.AddAsync(_mapper.Map<BookAuthor>(request));
-            await _context.SaveChangesAsync();
-            return await _bookService.GetBookWithAuthors(request.BookId, cancellationToken);
+            var bookAuthor = await _bookAuthorService.LinkBookToAuthor(request, cancellationToken);
+            return await _bookService.GetBookWithAuthors(bookAuthor.BookId, cancellationToken);
         }
     }
 }
