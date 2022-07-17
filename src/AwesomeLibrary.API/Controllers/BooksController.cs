@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using AwesomeLibrary.API.Models;
-using AwesomeLibrary.Application.Requests.Books;
+using AwesomeLibrary.Application.Resources.Books.Requests;
 using AwesomeLibrary.Domain.Entities;
 using AwesomeLibrary.Persistance;
 using MediatR;

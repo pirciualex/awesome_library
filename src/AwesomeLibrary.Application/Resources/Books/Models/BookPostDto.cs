@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace AwesomeLibrary.API.Models
+namespace AwesomeLibrary.Application.Resources.Books.Models
 {
     public class BookPostDto
     {

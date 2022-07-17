@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using AwesomeLibrary.API.Models;
+using AwesomeLibrary.Application.Resources.Books.Models;
 using AwesomeLibrary.Domain.Entities;
 using AwesomeLibrary.Persistance;
 using MediatR;
@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AwesomeLibrary.Application.Requests.Books
+namespace AwesomeLibrary.Application.Resources.Books.Requests
 {
     public class CreateRequest : BookPostDto, IRequest<BookGetDto>
     {

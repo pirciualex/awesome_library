@@ -1,8 +1,9 @@
 ﻿using AutoMapper;
-using AwesomeLibrary.API.Models;
+using AwesomeLibrary.Application.Resources.Books.Models;
+using AwesomeLibrary.Application.Resources.Books.Requests;
 using AwesomeLibrary.Domain.Entities;
 
-namespace AwesomeLibrary.Application.Requests.Books
+namespace AwesomeLibrary.Application.Resources.Books
 {
     public class MappingProfile : Profile
     {
