@@ -1,4 +1,6 @@
-﻿using MediatR;
+﻿using AwesomeLibrary.Application.Services;
+using AwesomeLibrary.Application.Services.Interfaces;
+using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
@@ -10,6 +12,8 @@ namespace AwesomeLibrary.Application
         {
             services.AddMediatR(Assembly.GetExecutingAssembly());
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
+
+            services.AddScoped<IBookService, BookService>();
             return services;
         }
     }

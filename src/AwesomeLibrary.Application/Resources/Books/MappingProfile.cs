@@ -12,7 +12,7 @@ namespace AwesomeLibrary.Application.Resources.Books
             CreateMap<CreateRequest, Book>();
             CreateMap<Book, BookGetDto>();
 
-            CreateMap<Book, BookWithAuthorDto>()
+            CreateMap<Book, BookWithAuthorsDto>()
                 .ForMember(t => t.Authors, o => o.MapFrom(s => s.BooksAuthors.Select(ba => ba.Author)));
             //CreateMap<Book, BookPostDto>();
         }

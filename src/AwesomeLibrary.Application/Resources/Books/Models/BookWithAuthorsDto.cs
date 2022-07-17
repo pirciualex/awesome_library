@@ -2,7 +2,7 @@
 
 namespace AwesomeLibrary.Application.Resources.Books.Models
 {
-    public class BookWithAuthorDto : BookGetDto
+    public class BookWithAuthorsDto : BookGetDto
     {
         public IEnumerable<AuthorGetDto> Authors { get; set; }
     }

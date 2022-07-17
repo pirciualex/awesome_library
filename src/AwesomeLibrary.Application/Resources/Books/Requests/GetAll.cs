@@ -28,7 +28,7 @@ namespace AwesomeLibrary.Application.Resources.Books.Requests
                 .Include(b => b.BooksAuthors)
                 .ThenInclude(ba => ba.Author)
                 .ToListAsync();
-            return _mapper.Map<IEnumerable<BookWithAuthorDto>>(books);
+            return _mapper.Map<IEnumerable<BookWithAuthorsDto>>(books);
         }
     }
 }
